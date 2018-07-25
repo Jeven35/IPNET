@@ -1,0 +1,123 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Write your model definitions here
+ */
+
+ /*
+ * Business network model
+ */
+
+namespace org.acme.ipregistry
+
+/**
+ * The status of a IP
+ * 销售进行状态与质押状态
+ */
+enum IpStatus {
+  o ONSELL
+  o PLEDGE
+}
+
+participant PrivateIndividual identified by id {
+  o String id
+  o String name
+  o String address
+  o Double balance default = 0.0
+}
+
+participant Bank identified by id {
+  o String id
+  o String name
+  o Double balance default = 0.0
+}
+
+participant InsuranceCompany identified by id {
+  o String id
+  o String name
+  o Double balance default = 0.0
+}
+
+participant Notary identified by id {
+  o String id
+  o String name
+  o String address
+  o Double balance default = 0.0
+}
+
+participant IPEstateAgent identified by id {
+  o String id
+  o String name
+  o Double balance default = 0.0
+  o Double feeRate
+}
+
+asset IPEstate identified by id {
+  o String id
+  o IpStatus status
+  o Double price default = 0.0
+  --> PrivateIndividual owner
+}
+
+asset Loan identified by id {
+   o String id
+   o Double amount
+   o Double interestRate
+   --> PrivateIndividual debtor
+  --> Bank bank
+  --> IPEstate ipEstate
+   o Integer durationInMonths
+}
+
+asset Insurance identified by id {
+  o String id
+  --> IPEstate ipEstate
+  --> Notary notary
+  --> PrivateIndividual insured
+  --> InsuranceCompany insuranceCompany
+  o Double monthlyCost
+  o Integer durationInMonths
+}
+
+transaction BuyingIPEstate {
+  --> PrivateIndividual buyer
+  --> PrivateIndividual seller
+  --> IPEstate ipEstate
+  --> Loan loan
+  --> IPEstateAgent ipEstateAgent
+  --> Insurance insurance
+}
+/**
+ * 假定买方觉得ip有问题，就先到公正处办理证明，再去保险公司索赔
+ * 
+ */
+
+transaction ContractingInsurance {
+  --> Notary notary
+  --> PrivateIndividual insured
+  --> InsuranceCompany insuranceCompany
+  --> IPEstate ipEstate
+  o Double monthlyCost
+  o Integer durationInMonths
+}
+
+transaction ContractingLoan {
+  --> PrivateIndividual debtor
+  --> Bank bank
+  --> IPEstate ipEstate
+  o Double interestRate
+  o Integer durationInMonths
+}
+
