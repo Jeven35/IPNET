@@ -83,6 +83,7 @@ asset Loan identified by id {
 
 asset Insurance identified by id {
   o String id
+  --> Loan loan
   --> IPEstate ipEstate
   --> Notary notary
   --> PrivateIndividual insured
@@ -95,22 +96,21 @@ transaction BuyingIPEstate {
   --> PrivateIndividual buyer
   --> PrivateIndividual seller
   --> IPEstate ipEstate
-  --> Loan loan
   --> IPEstateAgent ipEstateAgent
-  --> Insurance insurance
 }
-/**
- * 假定买方觉得ip有问题，就先到公正处办理证明，再去保险公司索赔
- * 
- */
 
 transaction ContractingInsurance {
-  --> Notary notary
   --> PrivateIndividual insured
   --> InsuranceCompany insuranceCompany
   --> IPEstate ipEstate
+  --> Loan loan
   o Double monthlyCost
   o Integer durationInMonths
+}
+
+transaction CompensatingInsurance {
+  o Insurance insurance
+  o Double compensation
 }
 
 transaction ContractingLoan {
@@ -121,3 +121,7 @@ transaction ContractingLoan {
   o Integer durationInMonths
 }
 
+transaction PayingLoan {
+  --> Loan loan
+  o Double payment
+}

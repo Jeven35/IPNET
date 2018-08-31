@@ -1,0 +1,41 @@
+query selectAllIPs{
+	description:"Select all IPs"
+	statement:
+		SELECT org.acme.ipregistry.IPEstate
+}
+
+query selectAllLoans{
+	description:"Select all Loans"
+	statement:
+		SELECT org.acme.ipregistry.Loan
+}
+
+query selectAllInsurances{
+	description:"Select all Insurances"
+	statement:
+		SELECT org.acme.ipregistry.Insurance
+}
+
+query selectAllProxyInsurances{
+	description:"Select all Proxy Insurances"
+	statement:
+		SELECT org.acme.ipregistry.ProxyInsurance
+}
+
+query selectAllPrivateIndividuals{
+	description:"Select all private individuals"
+	statement:
+		SELECT org.acme.ipregistry.PrivateIndividual
+}
+
+query selectAllBanks{
+	description:"Select all banks"
+	statement:
+		SELECT org.acme.ipregistry.Bank
+}
+
+query selectAllInsuranceCompany{
+	description:"Select all Insurance company"
+	statement:
+		SELECT org.acme.ipregistry.InsuranceCompany
+}
