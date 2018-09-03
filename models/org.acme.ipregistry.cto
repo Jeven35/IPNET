@@ -31,6 +31,12 @@ enum IpStatus {
   o PLEDGE
 }
 
+
+/**********************************************************
+参与者
+ ********************************************************/
+
+//  个人用户
 participant PrivateIndividual identified by id {
   o String id
   o String name
@@ -38,18 +44,21 @@ participant PrivateIndividual identified by id {
   o Double balance default = 0.0
 }
 
+// 银行
 participant Bank identified by id {
   o String id
   o String name
   o Double balance default = 0.0
 }
 
+// 保险公司
 participant InsuranceCompany identified by id {
   o String id
   o String name
   o Double balance default = 0.0
 }
 
+// 评估机构
 participant Notary identified by id {
   o String id
   o String name
@@ -57,20 +66,39 @@ participant Notary identified by id {
   o Double balance default = 0.0
 }
 
+// 专利池代理商
 participant IPEstateAgent identified by id {
   o String id
   o String name
   o Double balance default = 0.0
   o Double feeRate
+  o IPPool[] ipPools
 }
 
+
+/**********************************************************
+资产
+ ********************************************************/
+
+// 知识产权
 asset IPEstate identified by id {
   o String id
   o IpStatus status
   o Double price default = 0.0
   --> PrivateIndividual owner
+  --> IPEstateAgent ipEstateAgent
+  --> IPPool ipPool
 }
 
+// 专利池
+asset IPPool identified by poolId {
+  o String poolId
+  o Integer size
+  o IPEstate[] ipEstates
+  --> IPEstateAgent ipEstateAgent
+}
+
+// 贷款
 asset Loan identified by id {
    o String id
    o Double amount
@@ -81,6 +109,7 @@ asset Loan identified by id {
    o Integer durationInMonths
 }
 
+// 保险
 asset Insurance identified by id {
   o String id
   --> Loan loan
@@ -92,6 +121,13 @@ asset Insurance identified by id {
   o Integer durationInMonths
 }
 
+
+
+/**********************************************************
+交易记录
+ ********************************************************/
+
+//  p2p交易
 transaction BuyingIPEstate {
   --> PrivateIndividual buyer
   --> PrivateIndividual seller
@@ -99,6 +135,7 @@ transaction BuyingIPEstate {
   --> IPEstateAgent ipEstateAgent
 }
 
+// 保险合同
 transaction ContractingInsurance {
   --> PrivateIndividual insured
   --> InsuranceCompany insuranceCompany
@@ -108,11 +145,13 @@ transaction ContractingInsurance {
   o Integer durationInMonths
 }
 
+// 赔偿保险
 transaction CompensatingInsurance {
   o Insurance insurance
   o Double compensation
 }
 
+// 贷款
 transaction ContractingLoan {
   --> PrivateIndividual debtor
   --> Bank bank
@@ -121,7 +160,20 @@ transaction ContractingLoan {
   o Integer durationInMonths
 }
 
+// 赔偿保险
 transaction PayingLoan {
   --> Loan loan
   o Double payment
+}
+
+// IP入池
+transaction Inpool {
+  o IPEstate ipEstate
+  --> IPPool ipPool
+}
+
+// IP退池
+transaction Outpool {
+  o IPEstate ipEstate
+  --> IPPool ipPool
 }
